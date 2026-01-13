@@ -1,0 +1,40 @@
+{
+  "timeZone": "America/Los_Angeles",
+  "dependencies": {
+    "enabledAdvancedServices": [
+      {
+        "userSymbol": "Drive",
+        "serviceId": "drive",
+        "version": "v3"
+      },
+      {
+        "userSymbol": "AdminDirectory",
+        "serviceId": "admin",
+        "version": "directory_v1"
+      }
+    ]
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/drive.readonly",
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/gmail.send",
+    "https://www.googleapis.com/auth/admin.directory.user.readonly"
+  ],
+  "addOns": {
+    "common": {
+      "name": "External Share Risk Monitor",
+      "logoUrl": "https://www.gstatic.com/images/icons/material/system/1x/security_black_24dp.png",
+      "layoutProperties": {
+        "primaryColor": "#D93025",
+        "secondaryColor": "#202124"
+      }
+    },
+    "sheets": {
+      "homepageTrigger": {
+        "runFunction": "onOpen"
+      }
+    }
+  }
+}

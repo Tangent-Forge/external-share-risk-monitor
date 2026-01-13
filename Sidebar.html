@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: 'Google Sans', Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f8f9fa;
+      }
+      .container {
+        max-width: 380px;
+      }
+      h1 {
+        color: #202124;
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+      .card {
+        background: white;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .kpi-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .kpi-card {
+        background: white;
+        border-radius: 8px;
+        padding: 16px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .kpi-value {
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      .kpi-label {
+        font-size: 12px;
+        color: #5f6368;
+      }
+      .kpi-high { color: #d93025; }
+      .kpi-medium { color: #f9ab00; }
+      .kpi-low { color: #188038; }
+      .btn {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 8px;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .btn-primary {
+        background-color: #d93025;
+        color: white;
+      }
+      .btn-primary:hover {
+        background-color: #c5221f;
+      }
+      .btn-secondary {
+        background-color: #f1f3f4;
+        color: #202124;
+      }
+      .btn-secondary:hover {
+        background-color: #e8eaed;
+      }
+      .btn-danger {
+        background-color: #d93025;
+        color: white;
+      }
+      .btn-danger:hover {
+        background-color: #c5221f;
+      }
+      .risk-item {
+        border: 1px solid #dadce0;
+        border-radius: 4px;
+        padding: 12px;
+        margin-bottom: 12px;
+      }
+      .risk-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+      .risk-title {
+        font-weight: 600;
+        color: #202124;
+        font-size: 14px;
+        flex: 1;
+      }
+      .risk-score {
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+      }
+      .score-high { background-color: #fce8e6; color: #d93025; }
+      .score-medium { background-color: #fef7e0; color: #f9ab00; }
+      .score-low { background-color: #e6f4ea; color: #188038; }
+      .risk-details {
+        font-size: 12px;
+        color: #5f6368;
+        margin-bottom: 8px;
+      }
+      .risk-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .risk-btn {
+        flex: 1;
+        padding: 6px;
+        border: 1px solid #dadce0;
+        border-radius: 4px;
+        background: white;
+        color: #202124;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      .risk-btn:hover {
+        background-color: #f1f3f4;
+      }
+      .loading {
+        text-align: center;
+        padding: 40px;
+        color: #5f6368;
+      }
+      .spinner {
+        border: 3px solid #f1f3f4;
+        border-top: 3px solid #d93025;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 16px;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      .error {
+        color: #d93025;
+        padding: 12px;
+        background-color: #fce8e6;
+        border-radius: 4px;
+        margin-bottom: 16px;
+      }
+      .success {
+        color: #188038;
+        padding: 12px;
+        background-color: #ceead6;
+        border-radius: 4px;
+        margin-bottom: 16px;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #5f6368;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔒 External Share Risk Monitor</h1>
+      
+      <div id="content">
+        <div class="card">
+          <p style="color: #5f6368; margin-bottom: 16px;">
+            Scan Drive for files shared externally and manage security risks.
+          </p>
+          <button class="btn btn-primary" onclick="runRiskScan()">
+            Run Risk Scan
+          </button>
+          <button class="btn btn-secondary" onclick="loadReport()">
+            Load Last Report
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentReport = null;
+
+      function runRiskScan() {
+        const content = document.getElementById('content');
+        content.innerHTML = `
+          <div class="loading">
+            <div class="spinner"></div>
+            <p>Scanning for external shares...</p>
+          </div>
+        `;
+
+        google.script.run
+          .withSuccessHandler(onScanComplete)
+          .withFailureHandler(onScanError)
+          .apiRunRiskScan();
+      }
+
+      function onScanComplete(result) {
+        currentReport = result;
+        renderDashboard(result);
+      }
+
+      function renderDashboard(result) {
+        const content = document.getElementById('content');
+        
+        content.innerHTML = `
+          <div class="card">
+            <h3 style="margin: 0 0 16px 0; color: #202124; font-size: 16px;">
+              Risk Dashboard
+            </h3>
+            <div class="kpi-grid">
+              <div class="kpi-card">
+                <div class="kpi-value kpi-high">${result.summary.highRiskCount}</div>
+                <div class="kpi-label">High Risk</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-value kpi-medium">${result.summary.mediumRiskCount}</div>
+                <div class="kpi-label">Medium Risk</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-value kpi-low">${result.summary.lowRiskCount}</div>
+                <div class="kpi-label">Low Risk</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-value">${result.summary.totalFiles}</div>
+                <div class="kpi-label">Total External Files</div>
+              </div>
+            </div>
+            <div style="margin-bottom: 16px;">
+              <div style="font-size: 13px; color: #5f6368; margin-bottom: 4px;">
+                <strong>Average Risk Score:</strong> ${result.summary.averageRiskScore.toFixed(2)} / 10
+              </div>
+              <div style="font-size: 13px; color: #5f6368;">
+                <strong>Total Risk Score:</strong> ${result.summary.totalRiskScore.toFixed(2)}
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="exportReport()">
+              Export Report
+            </button>
+            <button class="btn btn-secondary" onclick="loadReport()">
+              Refresh
+            </button>
+          </div>
+          <div class="card">
+            <h3 style="margin: 0 0 16px 0; color: #202124; font-size: 16px;">
+              Top Risk Files
+            </h3>
+            ${result.summary.topRisks.map(file => renderRiskItem(file)).join('')}
+          </div>
+        `;
+      }
+
+      function renderRiskItem(file) {
+        const scoreClass = file.riskScore >= 8 ? 'score-high' : (file.riskScore >= 5 ? 'score-medium' : 'score-low');
+        const scoreLabel = file.riskScore >= 8 ? 'High' : (file.riskScore >= 5 ? 'Medium' : 'Low');
+        
+        const permissions = file.permissions.map(p => {
+          if (p.type === 'anyone') return '🌐 Public';
+          if (p.type === 'domain') return `🏢 ${p.domain}`;
+          if (p.type === 'user') return `👤 ${p.emailAddress || 'External'}`;
+          return p.type;
+        }).join(', ');
+        
+        return `
+          <div class="risk-item">
+            <div class="risk-header">
+              <div class="risk-title">${file.name}</div>
+              <div class="risk-score ${scoreClass}">${scoreLabel} (${file.riskScore})</div>
+            </div>
+            <div class="risk-details">
+              <div><strong>Permissions:</strong> ${permissions}</div>
+              <div><strong>Modified:</strong> ${new Date(file.modifiedTime).toLocaleDateString()}</div>
+            </div>
+            <div class="risk-actions">
+              <button class="risk-btn" onclick="revokeAccess('${file.id}')">
+                Revoke Access
+              </button>
+              <button class="risk-btn" onclick="viewFile('${file.webViewLink}')">
+                View File
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      function loadReport() {
+        const content = document.getElementById('content');
+        content.innerHTML = `
+          <div class="loading">
+            <div class="spinner"></div>
+            <p>Loading report...</p>
+          </div>
+        `;
+
+        google.script.run
+          .withSuccessHandler(onReportLoaded)
+          .withFailureHandler(onLoadError)
+          .apiGetRiskReport();
+      }
+
+      function onReportLoaded(result) {
+        if (!result.success) {
+          const content = document.getElementById('content');
+          content.innerHTML = `
+            <div class="empty-state">
+              <p>📊 No risk report available</p>
+              <p style="font-size: 13px; margin-top: 8px;">
+                Run a scan to generate a risk report.
+              </p>
+            </div>
+            <button class="btn btn-primary" onclick="runRiskScan()">
+              Run Risk Scan
+            </button>
+          `;
+          return;
+        }
+        
+        currentReport = result;
+        renderDashboard(result);
+      }
+
+      function revokeAccess(fileId) {
+        if (!confirm('Are you sure you want to revoke external access to this file? This action cannot be undone.')) {
+          return;
+        }
+
+        const content = document.getElementById('content');
+        content.innerHTML = `
+          <div class="loading">
+            <div class="spinner"></div>
+            <p>Revoking access...</p>
+          </div>
+        `;
+
+        google.script.run
+          .withSuccessHandler(onRevokeComplete)
+          .withFailureHandler(onRevokeError)
+          .apiRevokeAccess([fileId]);
+      }
+
+      function onRevokeComplete(result) {
+        loadReport();
+      }
+
+      function onRevokeError(error) {
+        const content = document.getElementById('content');
+        content.innerHTML = `
+          <div class="error">
+            <strong>Error:</strong> ${error.message}
+          </div>
+          <button class="btn btn-secondary" onclick="loadReport()">
+            Back to Report
+          </button>
+        `;
+      }
+
+      function viewFile(url) {
+        if (url) {
+          window.open(url, '_blank');
+        } else {
+          alert('No direct link available for this file.');
+        }
+      }
+
+      function exportReport() {
+        if (!currentReport) {
+          alert('No report available to export.');
+          return;
+        }
+
+        const content = document.getElementById('content');
+        content.innerHTML = `
+          <div class="loading">
+            <div class="spinner"></div>
+            <p>Exporting report...</p>
+          </div>
+        `;
+
+        google.script.run
+          .withSuccessHandler(onExportComplete)
+          .withFailureHandler(onExportError)
+          .apiExportReport();
+      }
+
+      function onExportComplete(result) {
+        const content = document.getElementById('content');
+        content.innerHTML = `
+          <div class="success">
+            <strong>Success!</strong> Report exported to Google Sheets.
+          </div>
+          <div class="card">
+            <p style="color: #5f6368; font-size: 13px; margin-bottom: 8px;">
+              <strong>Sheet URL:</strong> <a href="${result.url}" target="_blank">${result.url}</a>
+            </p>
+          </div>
+          <button class="btn btn-secondary" onclick="loadReport()">
+            Back to Report
+          </button>
+        `;
+      }
+
+      function onExportError(error) {
+        const content = document.getElementById('content');
+        content.innerHTML = `
+          <div class="error">
+            <strong>Error:</strong> ${error.message}
+          </div>
+          <button class="btn btn-secondary" onclick="loadReport()">
+            Back to Report
+          </button>
+        `;
+      }
+
+      function onScanError(error) {
+        const content = document.getElementById('content');
+        content.innerHTML = `
+          <div class="error">
+            <strong>Error:</strong> ${error.message}
+          </div>
+          <button class="btn btn-secondary" onclick="runRiskScan()">
+            Try Again
+          </button>
+        `;
+      }
+
+      function onLoadError(error) {
+        const content = document.getElementById('content');
+        content.innerHTML = `
+          <div class="error">
+            <strong>Error:</strong> ${error.message}
+          </div>
+          <button class="btn btn-secondary" onclick="loadReport()">
+            Try Again
+          </button>
+        `;
+      }
+    </script>
+  </body>
+</html>
