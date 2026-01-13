@@ -1,0 +1,9 @@
+{
+  "id": "WEB-001",
+  "category": "WEB",
+  "title": "Web Interface Usability and Performance Review",
+  "description": "Evaluates the web interface for usability, accessibility, and performance.",
+  "instructions": "Review the web interface of the application. Assess usability by evaluating navigation structure, clarity of forms, and feedback on user actions. Check accessibility compliance with standards like WCAG (e.g., keyboard navigation, screen reader support). Measure performance through page load times, API response times, and resource usage. Identify any UI/UX issues or performance bottlenecks. Provide actionable recommendations for enhancing user experience, accessibility, and web performance.",
+  "priority": "medium",
+  "version": "1.0"
+}

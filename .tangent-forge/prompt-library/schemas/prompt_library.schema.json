@@ -1,0 +1,196 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangentforge.com/schemas/prompt_library.schema.json",
+  "title": "Tangent Forge Prompt Library Schema",
+  "description": "Schema for validating prompt library entries and indexes",
+  
+  "definitions": {
+    "category": {
+      "type": "string",
+      "enum": ["dev", "docs", "review", "system", "extraction", "meta"],
+      "description": "Prompt category identifier"
+    },
+    
+    "complexity": {
+      "type": "string",
+      "enum": ["low", "medium", "high"],
+      "description": "Execution complexity level"
+    },
+    
+    "promptEntry": {
+      "type": "object",
+      "required": ["id", "name", "category", "description", "tags", "complexity"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z]+-\\d{3}$",
+          "description": "Unique prompt identifier (e.g., DEV-001, REVIEW-002)"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 100,
+          "description": "Human-readable prompt name"
+        },
+        "category": {
+          "$ref": "#/definitions/category"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 500,
+          "description": "Brief description of what the prompt does"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "minItems": 1,
+          "maxItems": 10,
+          "description": "Searchable tags (lowercase, hyphenated)"
+        },
+        "complexity": {
+          "$ref": "#/definitions/complexity"
+        },
+        "when_to_use": {
+          "type": "string",
+          "description": "Trigger conditions or use cases"
+        },
+        "prompt": {
+          "type": "string",
+          "minLength": 50,
+          "description": "The full prompt text"
+        },
+        "variants": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "prompt"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Variant name (e.g., 'Quick Version', 'Strict Mode')"
+              },
+              "description": {
+                "type": "string",
+                "description": "When to use this variant"
+              },
+              "prompt": {
+                "type": "string",
+                "description": "The variant prompt text"
+              }
+            }
+          },
+          "description": "Alternative versions of this prompt"
+        },
+        "expected_output": {
+          "type": "string",
+          "description": "Description or example of expected output format"
+        },
+        "source": {
+          "type": "string",
+          "description": "Original source document if adapted from existing material"
+        },
+        "file": {
+          "type": "string",
+          "pattern": "^prompts/[a-z]+/[A-Z]+-\\d{3}_[a-z_]+\\.md$",
+          "description": "Path to the full prompt file"
+        },
+        "created": {
+          "type": "string",
+          "format": "date",
+          "description": "Date prompt was created"
+        },
+        "updated": {
+          "type": "string",
+          "format": "date",
+          "description": "Date prompt was last updated"
+        },
+        "author": {
+          "type": "string",
+          "description": "Who created or contributed this prompt"
+        },
+        "related": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]+-\\d{3}$"
+          },
+          "description": "Related prompt IDs"
+        }
+      }
+    },
+    
+    "categoryDefinition": {
+      "type": "object",
+      "required": ["id", "name", "description", "path"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z]+$",
+          "description": "Category identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable category name"
+        },
+        "description": {
+          "type": "string",
+          "description": "What prompts in this category do"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^prompts/[a-z]+/$",
+          "description": "Directory path for category prompts"
+        }
+      }
+    }
+  },
+  
+  "type": "object",
+  "required": ["version", "meta", "categories", "prompts"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Reference to this schema"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Library version (semver)"
+    },
+    "meta": {
+      "type": "object",
+      "required": ["name", "owner", "updated"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "updated": {
+          "type": "string",
+          "format": "date"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "categories": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/categoryDefinition"
+      }
+    },
+    "prompts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/promptEntry"
+      }
+    }
+  }
+}

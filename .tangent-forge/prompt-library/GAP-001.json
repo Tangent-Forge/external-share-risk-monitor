@@ -1,0 +1,9 @@
+{
+  "id": "GAP-001",
+  "category": "GAP",
+  "title": "Functional Gap and Opportunity Analysis",
+  "description": "Identifies missing features, potential improvements, and areas where best practices are not fully implemented.",
+  "instructions": "Analyze the application to identify functional gaps, missing features, or areas not adhering to industry best practices. Compare current functionality against user needs, project goals, and competitor offerings. Look for opportunities to enhance existing features or add new ones that could improve user satisfaction or operational efficiency. Review code for technical debt or outdated practices that could be modernized. Provide a detailed report of findings with prioritized recommendations for addressing gaps and seizing opportunities.",
+  "priority": "high",
+  "version": "1.0"
+}

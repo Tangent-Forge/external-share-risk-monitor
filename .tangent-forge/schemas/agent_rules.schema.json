@@ -1,0 +1,264 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangentforge.com/schemas/agent_rules.schema.json",
+  "title": "Tangent Forge Agent Rules Schema",
+  "description": "Schema for validating agent ruleset configuration files",
+  "type": "object",
+  "required": ["version", "meta", "global", "domains"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Reference to this schema file"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the ruleset"
+    },
+    "meta": {
+      "type": "object",
+      "required": ["name", "owner", "updated"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Human-readable name for this ruleset"
+        },
+        "owner": {
+          "type": "string",
+          "description": "Organization or individual who maintains this ruleset"
+        },
+        "updated": {
+          "type": "string",
+          "format": "date",
+          "description": "Last update date (YYYY-MM-DD)"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description of ruleset purpose"
+        }
+      }
+    },
+    "global": {
+      "type": "object",
+      "description": "Global constraints that apply across all domains",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["read-only-until-authorized", "read-write", "audit-only"],
+          "description": "Default operating mode for agents"
+        },
+        "philosophy": {
+          "type": "string",
+          "description": "Guiding principle for agent behavior"
+        },
+        "constraints": {
+          "type": "object",
+          "properties": {
+            "no_deletions": { "type": "boolean" },
+            "require_rollback_plan": { "type": "boolean" },
+            "log_all_changes": { "type": "boolean" },
+            "stop_on_ambiguity": { "type": "boolean" },
+            "prefer_indexing_over_action": { "type": "boolean" },
+            "mark_unknowns_as_todo": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "domains": {
+      "type": "object",
+      "description": "Rule domains organized by category",
+      "additionalProperties": {
+        "$ref": "#/definitions/domain"
+      }
+    },
+    "workflows": {
+      "type": "object",
+      "description": "Defined workflows that agents can execute",
+      "additionalProperties": {
+        "$ref": "#/definitions/workflow"
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "description": "Files that should exist in governed repositories",
+      "properties": {
+        "required": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Files that must exist"
+        },
+        "optional": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Files that are recommended but not required"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "domain": {
+      "type": "object",
+      "required": ["id", "name", "rules"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z]+$",
+          "description": "Short identifier for the domain (e.g., CODE, DOC, SEC)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable domain name"
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/rule"
+          }
+        }
+      }
+    },
+    "rule": {
+      "type": "object",
+      "required": ["id", "name", "rule", "severity"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z]+-\\d{3}$",
+          "description": "Unique rule identifier (e.g., CODE-001)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Short name for the rule"
+        },
+        "rule": {
+          "type": "string",
+          "description": "Full rule description"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["critical", "required", "recommended", "optional"],
+          "description": "How strictly the rule must be followed"
+        },
+        "example": {
+          "type": "string",
+          "description": "Example of rule application"
+        },
+        "template": {
+          "type": "string",
+          "description": "Template text if applicable"
+        },
+        "path": {
+          "type": "string",
+          "description": "File or directory path related to this rule"
+        },
+        "paths": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            {
+              "type": "object",
+              "additionalProperties": { "type": "string" }
+            }
+          ],
+          "description": "Multiple paths related to this rule"
+        },
+        "file": {
+          "type": "string",
+          "description": "Specific file this rule references"
+        },
+        "patterns": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Patterns to match (e.g., for secrets scanning)"
+        },
+        "gitignore": {
+          "type": "boolean",
+          "description": "Whether path should be gitignored"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional implementation notes"
+        },
+        "threshold": {
+          "type": "string",
+          "description": "Numeric threshold if applicable"
+        },
+        "output": {
+          "type": "string",
+          "description": "Expected output file"
+        },
+        "fields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Required fields for registry entries"
+        },
+        "zones": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Zone definitions with descriptions"
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Label definitions with descriptions"
+        },
+        "buckets": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Classification bucket definitions"
+        },
+        "trigger": {
+          "type": "string",
+          "description": "When this rule is triggered"
+        },
+        "tracking_file": {
+          "type": "string",
+          "description": "File used for tracking related to this rule"
+        },
+        "index_file": {
+          "type": "string",
+          "description": "Index file related to this rule"
+        },
+        "archive_path": {
+          "type": "string",
+          "description": "Path for archived items"
+        }
+      }
+    },
+    "workflow": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^WF-[A-Z]+$",
+          "description": "Workflow identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable workflow name"
+        },
+        "trigger": {
+          "type": "string",
+          "description": "When this workflow should be executed"
+        },
+        "steps": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Ordered list of workflow steps"
+        },
+        "phases": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Ordered list of workflow phases"
+        },
+        "completion_rule": {
+          "type": "string",
+          "description": "Definition of when workflow is considered complete"
+        }
+      }
+    }
+  }
+}

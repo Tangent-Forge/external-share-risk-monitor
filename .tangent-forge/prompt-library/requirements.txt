@@ -1,0 +1,11 @@
+# Tangent Forge Prompt Library - Python Dependencies
+
+# JSON Schema validation
+jsonschema>=4.0.0
+
+# Clipboard support for ingest_prompt.py
+pyperclip>=1.8.0
+
+# Optional: For future enhancements
+# pytest>=7.0.0  # For testing
+# click>=8.0.0   # For better CLI (alternative to argparse)

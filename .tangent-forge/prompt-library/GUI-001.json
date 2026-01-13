@@ -1,0 +1,9 @@
+{
+  "id": "GUI-001",
+  "category": "GUI",
+  "title": "GUI Usability and Performance Review",
+  "description": "Evaluates the desktop GUI for user experience, responsiveness, and adherence to design standards.",
+  "instructions": "Review the GUI components of the application. Assess usability by checking navigation ease, clarity of instructions, and user feedback mechanisms. Evaluate performance by measuring response times for key actions. Ensure adherence to design standards such as consistent color schemes, typography, and layout. Identify any bugs or inconsistencies in GUI behavior across different screen resolutions or themes. Provide recommendations for improvement in user experience and performance optimization.",
+  "priority": "medium",
+  "version": "1.0"
+}

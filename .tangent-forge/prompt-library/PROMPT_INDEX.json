@@ -1,0 +1,240 @@
+{
+  "$schema": "./schemas/prompt_library.schema.json",
+  "version": "1.0.0",
+  "meta": {
+    "name": "Tangent Forge Prompt Library",
+    "owner": "tangent-forge",
+    "updated": "2025-12-25",
+    "description": "Curated collection of production-ready prompts organized by domain"
+  },
+  "categories": {
+    "dev": {
+      "id": "DEV",
+      "name": "Development & Code",
+      "description": "Prompts for code review, refactoring, debugging, and development workflows",
+      "path": "prompts/dev/"
+    },
+    "docs": {
+      "id": "DOCS",
+      "name": "Documentation",
+      "description": "Prompts for documentation generation, review, and governance",
+      "path": "prompts/docs/"
+    },
+    "review": {
+      "id": "REVIEW",
+      "name": "Review & Audit",
+      "description": "Prompts for code review, system audit, and compliance checking",
+      "path": "prompts/review/"
+    },
+    "system": {
+      "id": "SYS",
+      "name": "System & Infrastructure",
+      "description": "Prompts for system optimization, drive cleanup, and infrastructure tasks",
+      "path": "prompts/system/"
+    },
+    "extraction": {
+      "id": "EXTRACT",
+      "name": "Extraction & Analysis",
+      "description": "Prompts for data extraction, OCR, and document analysis workflows",
+      "path": "prompts/extraction/"
+    },
+    "meta": {
+      "id": "META",
+      "name": "Meta & Orchestration",
+      "description": "Prompts for prompt engineering, agent orchestration, and meta-level tasks",
+      "path": "prompts/meta/"
+    }
+  },
+  "prompts": [
+    {
+      "id": "DEV-001",
+      "name": "Master Ruleset Execution",
+      "category": "dev",
+      "file": "prompts/dev/DEV-001_master_ruleset_execution.md",
+      "description": "Execute project tasks while adhering to strict governance and hygiene standards",
+      "tags": ["governance", "hygiene", "master"],
+      "complexity": "high",
+      "source": "dev_agent_playbook.md"
+    },
+    {
+      "id": "DEV-002",
+      "name": "Governance Compliance Audit",
+      "category": "dev",
+      "file": "prompts/dev/DEV-002_governance_compliance_audit.md",
+      "description": "Perform compliance review on changes made by development agent",
+      "tags": ["audit", "compliance", "review"],
+      "complexity": "medium",
+      "source": "dev_agent_playbook.md"
+    },
+    {
+      "id": "DEV-003",
+      "name": "Comprehensive System Review",
+      "category": "dev",
+      "file": "prompts/dev/DEV-003_comprehensive_system_review.md",
+      "description": "Staff-level review of extraction/OCR systems with architecture analysis",
+      "tags": ["architecture", "review", "ocr", "extraction"],
+      "complexity": "high",
+      "source": "dev_agent_playbook.md"
+    },
+    {
+      "id": "DOCS-001",
+      "name": "Documentation Suite Generator",
+      "category": "docs",
+      "file": "prompts/docs/DOCS-001_documentation_suite_generator.md",
+      "description": "Create complete documentation suite for a repository",
+      "tags": ["documentation", "generator", "complete"],
+      "complexity": "high",
+      "source": "_documentation_prompts.md"
+    },
+    {
+      "id": "DOCS-002",
+      "name": "Documentation Reconciliation Pass",
+      "category": "docs",
+      "file": "prompts/docs/DOCS-002_documentation_reconciliation.md",
+      "description": "Post-change documentation update workflow",
+      "tags": ["reconciliation", "post-change", "workflow"],
+      "complexity": "medium",
+      "source": "_documentation_prompts.md"
+    },
+    {
+      "id": "DOCS-003",
+      "name": "Documentation Audit",
+      "category": "docs",
+      "file": "prompts/docs/DOCS-003_documentation_audit.md",
+      "description": "Audit documentation without making changes",
+      "tags": ["audit", "read-only", "compliance"],
+      "complexity": "low",
+      "source": "_documentation_prompts.md"
+    },
+    {
+      "id": "REVIEW-001",
+      "name": "Script Classification Pass",
+      "category": "review",
+      "file": "prompts/review/REVIEW-001_script_classification.md",
+      "description": "Classify scripts using 4-label system (ACTIVE/REFERENCE/ARCHIVE/DEAD)",
+      "tags": ["scripts", "classification", "cleanup"],
+      "complexity": "medium",
+      "source": "_documentation_prompts.md"
+    },
+    {
+      "id": "REVIEW-002",
+      "name": "Script Cleanup Sequence",
+      "category": "review",
+      "file": "prompts/review/REVIEW-002_script_cleanup_sequence.md",
+      "description": "Full 6-prompt sequence for script cleanup workflow",
+      "tags": ["scripts", "cleanup", "sequence"],
+      "complexity": "high",
+      "source": "_documentation_prompts.md"
+    },
+    {
+      "id": "REVIEW-003",
+      "name": "Data Asset Classification",
+      "category": "review",
+      "file": "prompts/review/REVIEW-003_data_asset_classification.md",
+      "description": "Classify CSV/JSON files into governance buckets",
+      "tags": ["data", "csv", "json", "classification"],
+      "complexity": "medium",
+      "source": "_documentation_prompts.md"
+    },
+    {
+      "id": "REVIEW-004",
+      "name": "UI/UX Design Review",
+      "category": "review",
+      "file": "prompts/review/REVIEW-004_uiux_design_review.md",
+      "description": "Evaluate UI for usability, accessibility, and design quality",
+      "tags": ["ui", "ux", "design", "accessibility"],
+      "complexity": "medium",
+      "source": "dev_agent_playbook.md"
+    },
+    {
+      "id": "REVIEW-005",
+      "name": "Code Quality Review",
+      "category": "review",
+      "file": "prompts/review/REVIEW-005_code_quality_review.md",
+      "description": "Senior engineer code review for completeness and quality",
+      "tags": ["code", "quality", "review"],
+      "complexity": "medium",
+      "source": "dev_agent_playbook.md"
+    },
+    {
+      "id": "SYS-001",
+      "name": "System Baseline Snapshot",
+      "category": "system",
+      "file": "prompts/system/SYS-001_system_baseline_snapshot.md",
+      "description": "Create ground truth snapshot of system environment",
+      "tags": ["baseline", "snapshot", "audit"],
+      "complexity": "medium",
+      "source": "production-ready_prompt_kit_.md"
+    },
+    {
+      "id": "SYS-002",
+      "name": "Installed Applications Audit",
+      "category": "system",
+      "file": "prompts/system/SYS-002_installed_apps_audit.md",
+      "description": "Inventory and classify all installed applications",
+      "tags": ["applications", "inventory", "audit"],
+      "complexity": "medium",
+      "source": "production-ready_prompt_kit_.md"
+    },
+    {
+      "id": "SYS-003",
+      "name": "Background Processes Audit",
+      "category": "system",
+      "file": "prompts/system/SYS-003_background_processes_audit.md",
+      "description": "Inventory running processes and services",
+      "tags": ["processes", "services", "audit"],
+      "complexity": "medium",
+      "source": "production-ready_prompt_kit_.md"
+    },
+    {
+      "id": "SYS-004",
+      "name": "Drive File System Audit",
+      "category": "system",
+      "file": "prompts/system/SYS-004_drive_filesystem_audit.md",
+      "description": "Scan drives and produce structural index",
+      "tags": ["drive", "filesystem", "audit"],
+      "complexity": "high",
+      "source": "production-ready_prompt_kit_.md"
+    },
+    {
+      "id": "SYS-005",
+      "name": "Performance Bottleneck Analysis",
+      "category": "system",
+      "file": "prompts/system/SYS-005_performance_bottleneck_analysis.md",
+      "description": "Identify performance bottlenecks under various workloads",
+      "tags": ["performance", "bottleneck", "analysis"],
+      "complexity": "high",
+      "source": "production-ready_prompt_kit_.md"
+    },
+    {
+      "id": "SYS-006",
+      "name": "Lean Boot Profile Design",
+      "category": "system",
+      "file": "prompts/system/SYS-006_lean_boot_profile.md",
+      "description": "Design optimized boot profile for dev workloads",
+      "tags": ["boot", "optimization", "performance"],
+      "complexity": "medium",
+      "source": "production-ready_prompt_kit_.md"
+    },
+    {
+      "id": "META-001",
+      "name": "Project Extractor",
+      "category": "meta",
+      "file": "prompts/meta/META-001_project_extractor.md",
+      "description": "Scan and map project content for ecosystem alignment",
+      "tags": ["extraction", "mapping", "alignment"],
+      "complexity": "high",
+      "source": "Tangent_Forge_Project_Extractor.md"
+    },
+    {
+      "id": "META-002",
+      "name": "Unified Master Setup",
+      "category": "meta",
+      "file": "prompts/meta/META-002_unified_master_setup.md",
+      "description": "Combined cleanup of scripts, documentation, and data assets",
+      "tags": ["setup", "cleanup", "master"],
+      "complexity": "high",
+      "source": "_documentation_prompts.md"
+    }
+  ]
+}

@@ -1,0 +1,353 @@
+{
+  "$schema": "./schemas/agent_rules.schema.json",
+  "version": "1.0.0",
+  "meta": {
+    "name": "Tangent Forge Agent Rules",
+    "owner": "tangent-forge",
+    "updated": "2025-12-25",
+    "description": "Canonical ruleset for dev agents operating in Tangent Forge repositories"
+  },
+  "global": {
+    "mode": "read-only-until-authorized",
+    "philosophy": "Observe → Index → Classify → Optimize → Govern",
+    "constraints": {
+      "no_deletions": true,
+      "require_rollback_plan": true,
+      "log_all_changes": true,
+      "stop_on_ambiguity": true,
+      "prefer_indexing_over_action": true,
+      "mark_unknowns_as_todo": true,
+      "always_recommend_next_steps": true,
+      "require_ordered_plan_when_multi_step": true
+    }
+  },
+  "domains": {
+    "code": {
+      "id": "CODE",
+      "name": "Code Hygiene & Architecture",
+      "rules": [
+        {
+          "id": "CODE-001",
+          "name": "Single Entrypoint",
+          "rule": "All main execution must route through a single, non-interactive CLI entrypoint",
+          "example": "python -m project_name command --args",
+          "severity": "required"
+        },
+        {
+          "id": "CODE-002",
+          "name": "Modularity",
+          "rule": "Extraction logic, OCR, PDF utilities, and configuration loading must be in separate core modules",
+          "paths": ["/core", "/utils", "/config"],
+          "severity": "required"
+        },
+        {
+          "id": "CODE-003",
+          "name": "Non-Interactive",
+          "rule": "Core scripts must support argparse for deterministic execution; interactive prompts only as fallback",
+          "severity": "required"
+        },
+        {
+          "id": "CODE-004",
+          "name": "Refactor Safety",
+          "rule": "Any refactor must ensure zero behavior change compared to frozen baseline",
+          "severity": "required"
+        },
+        {
+          "id": "CODE-005",
+          "name": "Granularity",
+          "rule": "All code changes must be kept small enough for review",
+          "threshold": "~500 lines changed per PR",
+          "severity": "recommended"
+        }
+      ]
+    },
+    "testing": {
+      "id": "TEST",
+      "name": "Testing & Artifact Hygiene",
+      "rules": [
+        {
+          "id": "TEST-001",
+          "name": "Baseline First",
+          "rule": "Before modifying extraction logic, freeze a golden output baseline",
+          "path": "tests/fixtures/baseline/",
+          "severity": "required"
+        },
+        {
+          "id": "TEST-002",
+          "name": "Parity Test",
+          "rule": "A mandatory parity test must compare new outputs against baseline",
+          "notes": "Normalize whitespace and sort rows before exact match",
+          "severity": "required"
+        },
+        {
+          "id": "TEST-003",
+          "name": "Generated Outputs",
+          "rule": "Anything produced by a run must be routed to artifacts/ and gitignored",
+          "path": "artifacts/",
+          "gitignore": true,
+          "severity": "required"
+        }
+      ]
+    },
+    "documentation": {
+      "id": "DOC",
+      "name": "Documentation Governance",
+      "rules": [
+        {
+          "id": "DOC-001",
+          "name": "Classification",
+          "rule": "All documentation must be created in one of three zones",
+          "zones": {
+            "docs/public/": "User-safe, release-ready (Usage, Installation, API)",
+            "docs/dev/": "Developer-facing (Architecture, Testing, ADRs, Runbooks)",
+            "docs/private/": "Internal-only concepts, plans, experiments (gitignored)"
+          },
+          "severity": "required"
+        },
+        {
+          "id": "DOC-002",
+          "name": "Never Delete",
+          "rule": "Never delete a document outright; move superseded documents to docs/archive/",
+          "archive_path": "docs/archive/",
+          "severity": "required"
+        },
+        {
+          "id": "DOC-003",
+          "name": "No Silent Archival",
+          "rule": "No document with open ideas or TODOs may be archived without a DEVELOPMENT_LOG entry",
+          "tracking_file": "docs/dev/DEVELOPMENT_LOG.md",
+          "severity": "required"
+        },
+        {
+          "id": "DOC-004",
+          "name": "Discoverability",
+          "rule": "Every active and archived document must be linked exactly once in the index",
+          "index_file": "docs/DOCUMENTATION_INDEX.md",
+          "severity": "required"
+        },
+        {
+          "id": "DOC-005",
+          "name": "Header Standard",
+          "rule": "Every doc must have a header with Purpose, Audience, Status, Last Updated",
+          "severity": "recommended"
+        },
+        {
+          "id": "DOC-006",
+          "name": "Reconciliation",
+          "rule": "Any code change must be followed by a Documentation Reconciliation Pass",
+          "trigger": "post-commit",
+          "severity": "required"
+        },
+        {
+          "id": "DOC-007",
+          "name": "Folder Organization",
+          "rule": "No overlapping or redundant documentation folders; consolidate using DOCS-004 prompt",
+          "examples": ["Avoid: dev/, dev_log/, dev_plan/ together", "Consolidate into clear hierarchy"],
+          "prompt": "DOCS-004",
+          "severity": "recommended"
+        }
+      ]
+    },
+    "scripts": {
+      "id": "SCRIPT",
+      "name": "Script Classification & Archival",
+      "rules": [
+        {
+          "id": "SCRIPT-001",
+          "name": "4-Label System",
+          "rule": "All scripts must be classified using the 4-label system",
+          "labels": {
+            "ACTIVE": "Imported, called by CLI, used in tests, known current",
+            "REFERENCE": "Not executed but contains reusable logic, OCR tuning, good comments",
+            "ARCHIVE": "Superseded by newer version, won't be modified again",
+            "DEAD": "One-off experiments, debug variants, unclear origin"
+          },
+          "severity": "required"
+        },
+        {
+          "id": "SCRIPT-002",
+          "name": "Registry",
+          "rule": "All classified scripts must be recorded in the Script Status Registry",
+          "file": "docs/dev/SCRIPT_STATUS_REGISTRY.md",
+          "severity": "required"
+        },
+        {
+          "id": "SCRIPT-003",
+          "name": "Archive Header",
+          "rule": "Archived/Dead scripts must have an archive status header block",
+          "template": "# ARCHIVE STATUS: [Archived|Dead]\n# SUPERSEDED BY: [path or none]\n# REASON: [short reason]\n# TRACKING: [DL-### or TODO]",
+          "severity": "required"
+        },
+        {
+          "id": "SCRIPT-004",
+          "name": "Folder Structure",
+          "rule": "Scripts should be organized into status folders",
+          "paths": {
+            "scripts/active/": "ACTIVE scripts",
+            "scripts/reference/": "REFERENCE scripts",
+            "scripts/archive/": "ARCHIVE and DEAD scripts"
+          },
+          "severity": "recommended"
+        }
+      ]
+    },
+    "data": {
+      "id": "DATA",
+      "name": "Data Asset Governance",
+      "rules": [
+        {
+          "id": "DATA-001",
+          "name": "Classification",
+          "rule": "All CSV/JSON files must be classified into buckets",
+          "buckets": {
+            "FIXTURE": "Test data, baselines → tests/fixtures/",
+            "CONFIG": "Templates, mappings, label configs → config/",
+            "GENERATED": "Runtime outputs → artifacts/ (gitignored)",
+            "REFERENCE": "Useful sample inputs → data/reference/",
+            "ARCHIVE": "Old versions, superseded → data/archive/"
+          },
+          "severity": "required"
+        },
+        {
+          "id": "DATA-002",
+          "name": "Registry",
+          "rule": "All data assets must be recorded in the Data Asset Registry",
+          "file": "docs/dev/DATA_ASSET_REGISTRY.md",
+          "severity": "required"
+        },
+        {
+          "id": "DATA-003",
+          "name": "Canonical Version",
+          "rule": "When versioned files exist (e.g., *markup2.csv), document the canonical choice",
+          "severity": "required"
+        }
+      ]
+    },
+    "security": {
+      "id": "SEC",
+      "name": "Security & Secrets",
+      "rules": [
+        {
+          "id": "SEC-001",
+          "name": "No Hardcoded Secrets",
+          "rule": "Never commit API keys, passwords, or tokens",
+          "patterns": ["sk-*", "sk-ant-*", "AIza*", "AKIA*", "ghp_*", "xox*", "-----BEGIN"],
+          "severity": "critical"
+        },
+        {
+          "id": "SEC-002",
+          "name": "Environment Variables",
+          "rule": "All secrets must be loaded from environment variables",
+          "severity": "critical"
+        },
+        {
+          "id": "SEC-003",
+          "name": "Gitignore Enforcement",
+          "rule": "Sensitive paths must be gitignored",
+          "paths": [
+            "*.env",
+            ".lmo/secrets.env",
+            "docs/private/",
+            "artifacts/",
+            "*.key",
+            "*.pem",
+            "*.p12"
+          ],
+          "severity": "critical"
+        },
+        {
+          "id": "SEC-004",
+          "name": "Example Files",
+          "rule": "Provide .env.example with dummy values for onboarding",
+          "severity": "recommended"
+        }
+      ]
+    },
+    "system": {
+      "id": "SYS",
+      "name": "System & Drive Auditing",
+      "rules": [
+        {
+          "id": "SYS-001",
+          "name": "Read-Only Mode",
+          "rule": "Default to read-only until explicitly authorized to change",
+          "severity": "required"
+        },
+        {
+          "id": "SYS-002",
+          "name": "Baseline Snapshot",
+          "rule": "Create a ground truth snapshot before any optimization",
+          "output": "SYSTEM_BASELINE.md",
+          "severity": "required"
+        },
+        {
+          "id": "SYS-003",
+          "name": "File Registry",
+          "rule": "Maintain a system file registry as control plane for cleanup",
+          "fields": ["path", "category", "owner", "regenerable", "backup_required", "cleanup_risk", "suggested_action"],
+          "severity": "recommended"
+        }
+      ]
+    }
+  },
+  "workflows": {
+    "reconciliation": {
+      "id": "WF-RECON",
+      "name": "Documentation Reconciliation Pass",
+      "trigger": "After any code, script, file structure, data asset, test, or archive status change",
+      "steps": [
+        "Summarize what changed",
+        "Review core docs (README, DOCUMENTATION_INDEX, registries, logs)",
+        "Update all affected documents",
+        "Log unresolved questions in DEVELOPMENT_LOG",
+        "Produce final report"
+      ],
+      "completion_rule": "Work is not considered complete until documentation reflects reality",
+      "output_requirements": {
+        "must_include": [
+          "summary_of_changes",
+          "ordered_next_steps"
+        ]
+      }
+    },
+    "script_cleanup": {
+      "id": "WF-SCRIPT",
+      "name": "Script Cleanup Sequence",
+      "phases": [
+        "Inventory (no changes)",
+        "Classify (ACTIVE/REFERENCE/ARCHIVE/DEAD)",
+        "Create registries and governance docs",
+        "Add archive headers + log open items",
+        "Move files to status folders",
+        "Validate and report"
+      ]
+    },
+    "audit": {
+      "id": "WF-AUDIT",
+      "name": "System Audit Sequence",
+      "phases": [
+        "Phase 0: System Context Snapshot (Baseline)",
+        "Phase 1: Installed Applications Audit",
+        "Phase 2: Background Processes & Services",
+        "Phase 3: Startup & Auto-Run Governance",
+        "Phase 4: Drive & File System Audit",
+        "Phase 5: Performance Bottleneck Analysis",
+        "Phase 6: Config & Policy Optimization",
+        "Phase 7: Cleanup & Governance Playbook"
+      ]
+    }
+  },
+  "artifacts": {
+    "required": [
+      "docs/DOCUMENTATION_INDEX.md",
+      "docs/dev/DEVELOPMENT_LOG.md",
+      "docs/dev/SCRIPT_STATUS_REGISTRY.md",
+      "docs/dev/DATA_ASSET_REGISTRY.md",
+      ".gitignore"
+    ],
+    "optional": [
+      "docs/dev/ARCHIVING_STANDARD.md",
+      ".github/PULL_REQUEST_TEMPLATE.md"
+    ]
+  }
+}
